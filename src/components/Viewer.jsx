@@ -23,7 +23,7 @@ function Viewer({ slide, annotations }) {
             return;
         }
 
-        fetch("http://localhost:7777/api/v0/slides/" + slide)
+        fetch("https://yli-hallila.fi:3000/http://csc.yli-hallila.fi:7777/api/v0/slides/" + slide)
             .then(res => res.json())
             .then(
             (result) => {
@@ -71,8 +71,15 @@ function Viewer({ slide, annotations }) {
     
                         var height = tileHeight - adjustY;
                         var width  = tileWidth  - adjustX;
+
+                        return result["openslide.remoteserver.uri"]
+                                    .replace("{tileX}", tileX)
+                                    .replace("{tileY}", tileY)
+                                    .replace("{level}", level)
+                                    .replace("{tileWidth}", width)
+                                    .replace("{tileHeight}", height)
     
-                        return "http://localhost:7777/tiles/" + slide + "-level-" + level + "-tiles/" + level + "_" + tileX + "_" + tileY + "_" + width + "_" + height + ".jpg"
+                       // return "http://csc.yli-hallila.fi:7777/tiles/" + slide + "-level-" + level + "-tiles/" + level + "_" + tileX + "_" + tileY + "_" + width + "_" + height + ".jpg"
                     }
                 });
                 

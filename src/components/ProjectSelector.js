@@ -7,15 +7,22 @@ function ProjectSelector({ organization, OnProjectChange }) {
     useEffect(() => {
         setSubjects([]);
 
-        fetch("http://localhost:7777/api/v0/workspaces")
+        fetch("https://yli-hallila.fi:3000/http://csc.yli-hallila.fi:7777/api/v0/workspaces")
             .then(res => res.json())
             .then(
                 (result) => {
+                    var projects = []
+
                     result.forEach(element => {
                         if (element.owner.id === organization) {
-                            setSubjects(element.subjects);
+                            projects = projects.concat(element.projects);
+                            //setSubjects(element.projects);
                         }
                     });
+
+                    console.log(projects);
+
+                    setSubjects(projects);
                 },
                 (error) => {
                     setSubjects([]);
@@ -35,18 +42,10 @@ function ProjectSelector({ organization, OnProjectChange }) {
 
     return (
         <div className="ProjectSelector">
-            {subjects.map(subject => (
-                <>
-                    <p class="text-xl underline">{subject.name}</p>
-                    
-                    <ul>
-                        {subject.projects.map(project => (
-                            <li>
-                                <a class="cursor-pointer" onClick={() => OnProjectChange(project.id)}>{project.name}</a>
-                            </li>
-                        ))}
-                    </ul>
-                </>
+            {subjects.map(project => (
+                <li>
+                    <a class="cursor-pointer" onClick={() => OnProjectChange(project.id)}>{project.name}</a>
+                </li>
             ))}
         </div>
     );
