@@ -41,19 +41,18 @@ function ProjectSelector({ organizationId, onProjectChange }: ProjectSelectorPro
     return (
         <div className="ProjectSelector">
             {subjects.map((subject) => (
-                <>
+                <span key={subject.id}>
                     <p className="text-xl underline">{subject.name}</p>
-
                     <ul>
                         {subject.projects.map((project) => (
-                            <li>
+                            <li key={project.id}>
                                 <a className="cursor-pointer" onClick={() => onProjectChange(project.id)}>
                                     {project.name}
                                 </a>
                             </li>
                         ))}
                     </ul>
-                </>
+                </span>
             ))}
         </div>
     );

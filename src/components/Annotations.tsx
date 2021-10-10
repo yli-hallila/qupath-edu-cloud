@@ -12,7 +12,7 @@ function Annotations({ annotations }: AnnotationsProps) {
                 <>
                     <p className="text-xl p-4">Annotations</p>
                     {annotations.map((annotation) => (
-                        <div className="grid grid-cols-4 p-2 border-b border-t mb-2">
+                        <div key={annotation.properties.name} className="grid grid-cols-4 p-2 border-b border-t mb-2">
                             <div className="col-span-4">
                                 {annotation.properties.name ? (
                                     <p>
