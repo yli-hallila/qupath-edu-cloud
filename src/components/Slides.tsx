@@ -1,16 +1,22 @@
 import React from "react";
+import { Image } from "../types";
 
-function Slides({ slides, OnSlideChange }) {
+interface SlidesProps {
+    images?: Image[];
+    onSlideChange: (newSlide: string) => void;
+}
+
+function Slides({ images, onSlideChange }: SlidesProps) {
     return (
         <div id="Slides">
-            {slides ? (
+            {images ? (
                 <>
                     <p className="text-xl p-4">Slides</p>
 
-                    {slides.map((slide) => (
+                    {images.map((slide) => (
                         <div
                             className="grid grid-cols-6 p-2 border-b border-t mb-2 cursor-pointer"
-                            onClick={() => OnSlideChange(slide.serverBuilder.uri)}
+                            onClick={() => onSlideChange(slide.serverBuilder.uri)}
                         >
                             <div className="col-span-1">
                                 <img src={"data:image/png;base64," + slide.thumbnail} width="64px" alt="" />

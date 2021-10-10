@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { Subject, Workspace } from "../types";
 
-function ProjectSelector({ organization, OnProjectChange }) {
-    const [subjects, setSubjects] = useState([]);
+interface ProjectSelectorProps {
+    organizationId: string;
+    onProjectChange: (newProject: string) => void;
+}
+
+function ProjectSelector({ organizationId, onProjectChange }: ProjectSelectorProps) {
+    const [subjects, setSubjects] = useState<Subject[]>([]);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -11,9 +17,9 @@ function ProjectSelector({ organization, OnProjectChange }) {
             .then((res) => res.json())
             .then(
                 (result) => {
-                    result.forEach((element) => {
-                        if (element.owner.id === organization) {
-                            setSubjects(element.subjects);
+                    result.forEach((workspace: Workspace) => {
+                        if (workspace.owner.id === organizationId) {
+                            setSubjects(workspace.subjects);
                         }
                     });
                 },
@@ -22,14 +28,14 @@ function ProjectSelector({ organization, OnProjectChange }) {
                     setError(error);
                 }
             );
-    }, [organization]);
+    }, [organizationId]);
 
     if (error) {
-        return "Error with ProjectSelector";
+        return <>"Error with ProjectSelector"</>;
     }
 
     if (subjects.length === 0) {
-        return "No subjects";
+        return <>"No subjects"</>;
     }
 
     return (
@@ -41,7 +47,7 @@ function ProjectSelector({ organization, OnProjectChange }) {
                     <ul>
                         {subject.projects.map((project) => (
                             <li>
-                                <a className="cursor-pointer" onClick={() => OnProjectChange(project.id)}>
+                                <a className="cursor-pointer" onClick={() => onProjectChange(project.id)}>
                                     {project.name}
                                 </a>
                             </li>

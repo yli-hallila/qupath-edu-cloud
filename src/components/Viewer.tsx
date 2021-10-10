@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
+import { Annotation, LineString, Polygon } from "../types";
 
-function Viewer({ slide, annotations }) {
-    const [viewer, setViewer] = useState(null);
+interface ViewerProps {
+    slideId?: string | null;
+    annotations?: Annotation[];
+}
+
+function Viewer({ slideId, annotations }: ViewerProps) {
+    const [viewer, setViewer] = useState<OpenSeadragon.Viewer | null>(null);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        var viewer = window.OpenSeadragon({
+        const viewer = window.OpenSeadragon({
             id: "Viewer",
             prefixUrl: "assets/images/",
             defaultZoomLevel: 0,
@@ -19,22 +25,22 @@ function Viewer({ slide, annotations }) {
     }, []);
 
     useEffect(() => {
-        if (!slide) {
+        if (!slideId || !viewer || !annotations) {
             return;
         }
 
-        fetch("http://yli-hallila.fi:7777/api/v0/slides/" + slide)
+        fetch(`http://yli-hallila.fi:7777/api/v0/slides/${slideId}`)
             .then((res) => res.json())
             .then(
                 (result) => {
-                    var downsamples = [];
-                    var levelCount = parseInt(result["openslide.level-count"]);
+                    const downsamples: number[] = [];
+                    const levelCount = parseInt(result["openslide.level-count"]);
 
-                    var slideHeight = parseInt(result["openslide.level[0].height"]);
-                    var slideWidth = parseInt(result["openslide.level[0].width"]);
+                    const slideHeight = parseInt(result["openslide.level[0].height"]);
+                    const slideWidth = parseInt(result["openslide.level[0].width"]);
 
-                    var tileHeight = parseInt(result["openslide.level[0].tile-width"]);
-                    var tileWidth = parseInt(result["openslide.level[0].tile-height"]);
+                    const tileHeight = parseInt(result["openslide.level[0].tile-width"]);
+                    const tileWidth = parseInt(result["openslide.level[0].tile-height"]);
 
                     for (let i = 0; i < levelCount; i++) {
                         downsamples.push(Math.floor(result["openslide.level[" + i + "].downsample"]));
@@ -47,19 +53,19 @@ function Viewer({ slide, annotations }) {
                         tileWidth: tileWidth,
                         minLevel: 0,
                         maxLevel: levelCount - 1,
-                        getLevelScale: function (level) {
+                        getLevelScale: function (level: number) {
                             return 1 / downsamples[levelCount - level - 1];
                         },
-                        getTileUrl: function (level, x, y) {
+                        getTileUrl: function (level: number, x: number, y: number) {
                             level = levelCount - level - 1;
 
-                            var downsample = downsamples[level];
+                            const downsample = downsamples[level];
 
-                            var adjustY = 0;
-                            var adjustX = 0;
+                            let adjustY = 0;
+                            let adjustX = 0;
 
-                            var tileY = y * tileHeight * downsample;
-                            var tileX = x * tileWidth * downsample;
+                            const tileY = y * tileHeight * downsample;
+                            const tileX = x * tileWidth * downsample;
 
                             if (tileX + downsample * tileWidth > slideWidth) {
                                 adjustX = tileWidth - Math.floor(Math.abs((tileX - slideWidth) / downsample));
@@ -69,8 +75,8 @@ function Viewer({ slide, annotations }) {
                                 adjustY = tileHeight - Math.floor(Math.abs((tileY - slideHeight) / downsample));
                             }
 
-                            var height = tileHeight - adjustY;
-                            var width = tileWidth - adjustX;
+                            const height = tileHeight - adjustY;
+                            const width = tileWidth - adjustX;
 
                             return result["openslide.remoteserver.uri"]
                                 .replace("{tileX}", tileX)
@@ -85,6 +91,8 @@ function Viewer({ slide, annotations }) {
                     // TODO: Create fallback aperio.MPP does not exist
                     const mpp = parseFloat(result["aperio.MPP"]);
 
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     viewer.scalebar({
                         xOffset: 10,
                         yOffset: 10,
@@ -95,19 +103,23 @@ function Viewer({ slide, annotations }) {
                         pixelsPerMeter: mpp ? 1e6 / mpp : 0,
                     });
 
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     const overlay = viewer.svgOverlay();
 
                     window.d3.select(overlay.node()).selectAll("*").remove();
 
                     Array.from(annotations).forEach((annotation) => {
                         if (annotation.geometry.type === "LineString") {
-                            drawLine(annotation.geometry.coordinates);
+                            drawLine(annotation.geometry.coordinates as LineString);
                         } else if (annotation.geometry.type === "Polygon") {
-                            drawPolygon(annotation.geometry.coordinates[0]);
+                            drawPolygon(annotation.geometry.coordinates as Polygon);
+                        } else {
+                            console.log(`${annotation.geometry.type} geometry type not implemented.`);
                         }
                     });
 
-                    function drawLine(coordinates) {
+                    function drawLine(coordinates: LineString) {
                         window.d3
                             .select(overlay.node())
                             .append("line")
@@ -119,27 +131,27 @@ function Viewer({ slide, annotations }) {
                             .attr("y2", scaleY(coordinates[1][1]));
                     }
 
-                    function drawPolygon(coordinates) {
+                    function drawPolygon(coordinates: Polygon) {
                         window.d3
                             .select(overlay.node())
                             .append("polygon")
                             .style("stroke", "#f00")
                             .style("stroke-width", 0.001)
                             .style("fill", "transparent")
-                            .attr("points", function (point) {
-                                return coordinates
-                                    .map(function (point) {
+                            .attr("points", function () {
+                                return coordinates[0]
+                                    .map(function (point: number[]) {
                                         return [scaleX(point[0]), scaleY(point[1])].join(",");
                                     })
                                     .join(" ");
                             });
                     }
 
-                    function scaleX(x) {
+                    function scaleX(x: number) {
                         return x / slideWidth;
                     }
 
-                    function scaleY(y) {
+                    function scaleY(y: number) {
                         return y / slideHeight;
                     }
                 },
@@ -147,10 +159,10 @@ function Viewer({ slide, annotations }) {
                     setError(error);
                 }
             );
-    }, [slide]);
+    }, [slideId]);
 
     if (error) {
-        return "Error with Viewer";
+        return <>"Error with Viewer"</>;
     }
 
     return <div id="Viewer" className="h-full w-full" />;

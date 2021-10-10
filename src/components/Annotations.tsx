@@ -1,14 +1,19 @@
 import React from "react";
+import { Annotation } from "../types";
 
-function Annotations({ annotations }) {
+interface AnnotationsProps {
+    annotations?: Annotation[];
+}
+
+function Annotations({ annotations }: AnnotationsProps) {
     return (
         <div id="Annotations">
             {annotations ? (
                 <>
-                    <p class="text-xl p-4">Annotations</p>
+                    <p className="text-xl p-4">Annotations</p>
                     {annotations.map((annotation) => (
-                        <div class="grid grid-cols-4 p-2 border-b border-t mb-2">
-                            <div class="col-span-4">
+                        <div className="grid grid-cols-4 p-2 border-b border-t mb-2">
+                            <div className="col-span-4">
                                 {annotation.properties.name ? (
                                     <p>
                                         {annotation.geometry.type}: {annotation.properties.name}

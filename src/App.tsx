@@ -5,19 +5,19 @@ import ProjectSelector from "./components/ProjectSelector";
 import ProjectView from "./components/ProjectView";
 
 const App = () => {
-    const [project, setProject] = useState(null);
-    const [organization, setOrganization] = useState(null);
+    const [project, setProject] = useState("");
+    const [organization, setOrganization] = useState("");
 
-    const OnOrganizationChange = (newOrganization) => {
+    const onOrganizationChange = (newOrganization: string) => {
         setOrganization(newOrganization);
     };
 
-    const OnProjectChange = (newProject) => {
+    const onProjectChange = (newProject: string) => {
         setProject(newProject);
     };
 
     return (
-        <div className="App" className="mx-auto font-mono h-screen">
+        <div className="App mx-auto font-mono h-screen">
             <div className="bg-blue-500 p-2">
                 <p className="text-white font-bold text-lg text-center">
                     For the complete experience download QuPath Edu{" "}
@@ -27,13 +27,13 @@ const App = () => {
                 </p>
             </div>
 
-            {project !== null ? (
-                <ProjectView project={project} OnProjectChange={OnProjectChange} />
+            {project !== "" ? (
+                <ProjectView projectId={project} onProjectChange={onProjectChange} />
             ) : (
                 <header className="App-header mx-auto w-64 space-y-12 mt-4">
                     <h1 className="text-xl">QuPath Edu Viewer</h1>
-                    <OrganizationSelector OnOrganizationChange={OnOrganizationChange} />
-                    <ProjectSelector organization={organization} OnProjectChange={OnProjectChange} />
+                    <OrganizationSelector onOrganizationChange={onOrganizationChange} />
+                    <ProjectSelector organizationId={organization} onProjectChange={onProjectChange} />
                 </header>
             )}
         </div>

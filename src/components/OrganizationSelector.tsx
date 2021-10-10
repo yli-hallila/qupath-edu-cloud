@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { Organization } from "../types";
 
-function OrganizationSelector({ OnOrganizationChange }) {
+interface ProjectSelectorProps {
+    onOrganizationChange: (newProject: string) => void;
+}
+
+function OrganizationSelector({ onOrganizationChange }: ProjectSelectorProps) {
     const [organizations, setOrganizations] = useState([]);
     const [error, setError] = useState(null);
 
@@ -18,17 +23,17 @@ function OrganizationSelector({ OnOrganizationChange }) {
     }, []);
 
     if (error) {
-        return "Error with OrganizationSelector";
+        return <>"Error with OrganizationSelector"</>;
     }
 
     return (
         <div id="OrganizationSelector">
             <p className="text-xl">Select organization</p>
 
-            <select name="organization" onChange={(e) => OnOrganizationChange(e.target.value)}>
+            <select name="organization" onChange={(e) => onOrganizationChange(e.target.value)}>
                 <option>Select ...</option>
 
-                {organizations.map((organization) => (
+                {organizations.map((organization: Organization) => (
                     <option value={organization.id} key={organization.id}>
                         {organization.name}
                     </option>
