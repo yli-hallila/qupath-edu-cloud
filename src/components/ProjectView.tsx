@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { fetchApi } from "../lib/api";
 import { ProjectData } from "../types";
 import Annotations from "./Annotations";
 import Slides from "./Slides";
@@ -13,7 +14,7 @@ function ProjectView({ projectId, onProjectChange }: ProjectViewProps) {
     const [projectData, setProjectData] = useState<ProjectData | null>(null);
     const [annotations, setAnnotations] = useState([]);
     const [slide, setSlide] = useState("");
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<Error | null>(null);
 
     const onSlideChange = (newSlide: string) => {
         if (projectData) {
@@ -34,16 +35,19 @@ function ProjectView({ projectId, onProjectChange }: ProjectViewProps) {
     };
 
     useEffect(() => {
-        fetch(`http://yli-hallila.fi:7777/api/v0/projects/${projectId}`)
-            .then((res) => res.json())
-            .then(
-                (result) => {
-                    setProjectData(result);
-                },
-                (error) => {
-                    setError(error);
-                }
-            );
+        const apiHelper = async () => {
+            const result = await fetchApi(`/projects/${projectId}`);
+            setProjectData(result);
+        };
+
+        try {
+            apiHelper();
+        } catch (e) {
+            setProjectData(null);
+            if (e instanceof Error) {
+                setError(e);
+            }
+        }
     }, [projectId]);
 
     if (error) {

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { fetchApi } from "../lib/api";
 import { Organization } from "../types";
 
 interface ProjectSelectorProps {
@@ -7,19 +8,22 @@ interface ProjectSelectorProps {
 
 function OrganizationSelector({ onOrganizationChange }: ProjectSelectorProps) {
     const [organizations, setOrganizations] = useState([]);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<Error | null>(null);
 
     useEffect(() => {
-        fetch("http://yli-hallila.fi:7777/api/v0/organizations")
-            .then((res) => res.json())
-            .then(
-                (result) => {
-                    setOrganizations(result);
-                },
-                (error) => {
-                    setError(error);
-                }
-            );
+        const apiHelper = async () => {
+            const result = await fetchApi("/organizations");
+            setOrganizations(result);
+        };
+
+        try {
+            apiHelper();
+        } catch (e) {
+            setOrganizations([]);
+            if (e instanceof Error) {
+                setError(e);
+            }
+        }
     }, []);
 
     if (error) {

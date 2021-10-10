@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { fetchApi } from "../lib/api";
 import { Subject, Workspace } from "../types";
 
 interface ProjectSelectorProps {
@@ -8,26 +9,26 @@ interface ProjectSelectorProps {
 
 function ProjectSelector({ organizationId, onProjectChange }: ProjectSelectorProps) {
     const [subjects, setSubjects] = useState<Subject[]>([]);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<Error | null>(null);
 
     useEffect(() => {
-        setSubjects([]);
-
-        fetch("http://yli-hallila.fi:7777/api/v0/workspaces")
-            .then((res) => res.json())
-            .then(
-                (result) => {
-                    result.forEach((workspace: Workspace) => {
-                        if (workspace.owner.id === organizationId) {
-                            setSubjects(workspace.subjects);
-                        }
-                    });
-                },
-                (error) => {
-                    setSubjects([]);
-                    setError(error);
+        const apiHelper = async () => {
+            const result = await fetchApi("/workspaces");
+            result.forEach((workspace: Workspace) => {
+                if (workspace.owner.id === organizationId) {
+                    setSubjects(workspace.subjects);
                 }
-            );
+            });
+        };
+
+        try {
+            apiHelper();
+        } catch (e) {
+            setSubjects([]);
+            if (e instanceof Error) {
+                setError(e);
+            }
+        }
     }, [organizationId]);
 
     if (error) {
