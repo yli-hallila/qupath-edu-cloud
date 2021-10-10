@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 
 function OrganizationSelector({ OnOrganizationChange }) {
-    const [ organizations, setOrganizations ] = useState([]);
-    const [ error, setError ] = useState(null);
+    const [organizations, setOrganizations] = useState([]);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         fetch("http://yli-hallila.fi:7777/api/v0/organizations")
-            .then(res => res.json())
+            .then((res) => res.json())
             .then(
                 (result) => {
                     setOrganizations(result);
@@ -14,7 +14,7 @@ function OrganizationSelector({ OnOrganizationChange }) {
                 (error) => {
                     setError(error);
                 }
-            )
+            );
     }, []);
 
     if (error) {
@@ -23,17 +23,19 @@ function OrganizationSelector({ OnOrganizationChange }) {
 
     return (
         <div id="OrganizationSelector">
-            <p class="text-xl">Select organization</p>
+            <p className="text-xl">Select organization</p>
 
-            <select name="organization" onChange={ e => OnOrganizationChange(e.target.value) }>
+            <select name="organization" onChange={(e) => OnOrganizationChange(e.target.value)}>
                 <option>Select ...</option>
 
-                {organizations.map(organization => (
-                    <option value={organization.id} key={organization.id}>{organization.name}</option>
+                {organizations.map((organization) => (
+                    <option value={organization.id} key={organization.id}>
+                        {organization.name}
+                    </option>
                 ))}
             </select>
         </div>
     );
-};
+}
 
 export default OrganizationSelector;

@@ -8,10 +8,10 @@ function ProjectSelector({ organization, OnProjectChange }) {
         setSubjects([]);
 
         fetch("http://yli-hallila.fi:7777/api/v0/workspaces")
-            .then(res => res.json())
+            .then((res) => res.json())
             .then(
                 (result) => {
-                    result.forEach(element => {
+                    result.forEach((element) => {
                         if (element.owner.id === organization) {
                             setSubjects(element.subjects);
                         }
@@ -22,8 +22,7 @@ function ProjectSelector({ organization, OnProjectChange }) {
                     setError(error);
                 }
             );
-        
-    }, [ organization ]);
+    }, [organization]);
 
     if (error) {
         return "Error with ProjectSelector";
@@ -35,14 +34,16 @@ function ProjectSelector({ organization, OnProjectChange }) {
 
     return (
         <div className="ProjectSelector">
-            {subjects.map(subject => (
+            {subjects.map((subject) => (
                 <>
-                    <p class="text-xl underline">{subject.name}</p>
-                    
+                    <p className="text-xl underline">{subject.name}</p>
+
                     <ul>
-                        {subject.projects.map(project => (
+                        {subject.projects.map((project) => (
                             <li>
-                                <a class="cursor-pointer" onClick={() => OnProjectChange(project.id)}>{project.name}</a>
+                                <a className="cursor-pointer" onClick={() => OnProjectChange(project.id)}>
+                                    {project.name}
+                                </a>
                             </li>
                         ))}
                     </ul>
@@ -50,6 +51,6 @@ function ProjectSelector({ organization, OnProjectChange }) {
             ))}
         </div>
     );
-};
+}
 
 export default ProjectSelector;
