@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { fetchApi } from "../lib/api";
 import { Organization } from "../types";
 
-interface ProjectSelectorProps {
+interface OrganizationSelectorProps {
     onOrganizationChange: (newProject: string) => void;
 }
 
-function OrganizationSelector({ onOrganizationChange }: ProjectSelectorProps) {
+function OrganizationSelector({ onOrganizationChange }: OrganizationSelectorProps) {
     const [organizations, setOrganizations] = useState([]);
     const [error, setError] = useState<Error | null>(null);
 
