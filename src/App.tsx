@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "tailwindcss/tailwind.css";
+import HostSelector from "./components/HostSelector";
 import OrganizationSelector from "./components/OrganizationSelector";
 import ProjectSelector from "./components/ProjectSelector";
 import ProjectView from "./components/ProjectView";
 
 const App = () => {
-    const [project, setProject] = useState("");
     const [organization, setOrganization] = useState("");
+    const [project, setProject] = useState("");
 
     const onOrganizationChange = (newOrganization: string) => {
         setOrganization(newOrganization);
@@ -26,6 +27,8 @@ const App = () => {
                     </a>
                 </p>
             </div>
+
+            <HostSelector />
 
             {project !== "" ? (
                 <ProjectView projectId={project} onProjectChange={onProjectChange} />

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { fetchApi } from "../lib/api";
+import { useRecoilValue } from "recoil";
+import { fetchOrganizations } from "../lib/api";
+import { hostState } from "../lib/atoms";
 import { Organization } from "../types";
 
 interface OrganizationSelectorProps {
@@ -7,27 +9,37 @@ interface OrganizationSelectorProps {
 }
 
 function OrganizationSelector({ onOrganizationChange }: OrganizationSelectorProps) {
+    const host = useRecoilValue(hostState);
     const [organizations, setOrganizations] = useState([]);
-    const [error, setError] = useState<Error | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        if (!host) {
+            setError("No host selected");
+            return;
+        }
+
         const apiHelper = async () => {
-            const result = await fetchApi("/organizations");
-            setOrganizations(result);
+            try {
+                const result = await fetchOrganizations();
+                setOrganizations(result);
+                setError(null);
+            } catch (e) {
+                if (e instanceof Error) {
+                    setError(e.message);
+                }
+            }
         };
 
-        try {
-            apiHelper();
-        } catch (e) {
-            setOrganizations([]);
-            if (e instanceof Error) {
-                setError(e);
-            }
-        }
-    }, []);
+        apiHelper();
+    }, [host]);
 
     if (error) {
-        return <>"Error with OrganizationSelector"</>;
+        return <p>{error}</p>;
+    }
+
+    if (organizations.length === 0) {
+        return <p>Select a host</p>;
     }
 
     return (

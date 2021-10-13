@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { fetchApi } from "../lib/api";
+import { useEffect, useState } from "react";
+import { fetchProjectData } from "../lib/api";
 import { ProjectData } from "../types";
 import Annotations from "./Annotations";
 import Slides from "./Slides";
@@ -36,18 +36,18 @@ function ProjectView({ projectId, onProjectChange }: ProjectViewProps) {
 
     useEffect(() => {
         const apiHelper = async () => {
-            const result = await fetchApi(`/projects/${projectId}`);
-            setProjectData(result);
+            try {
+                const result = await fetchProjectData(projectId);
+                setProjectData(result);
+            } catch (e) {
+                setProjectData(null);
+                if (e instanceof Error) {
+                    setError(e);
+                }
+            }
         };
 
-        try {
-            apiHelper();
-        } catch (e) {
-            setProjectData(null);
-            if (e instanceof Error) {
-                setError(e);
-            }
-        }
+        apiHelper();
     }, [projectId]);
 
     if (error) {

@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { fetchApi } from "../lib/api";
+import { useEffect, useState } from "react";
+import { useRecoilValue } from "recoil";
+import { fetchWorkspaces } from "../lib/api";
+import { hostState } from "../lib/atoms";
 import { Subject, Workspace } from "../types";
 
 interface ProjectSelectorProps {
@@ -8,27 +10,32 @@ interface ProjectSelectorProps {
 }
 
 function ProjectSelector({ organizationId, onProjectChange }: ProjectSelectorProps) {
+    const host = useRecoilValue(hostState);
     const [subjects, setSubjects] = useState<Subject[]>([]);
     const [error, setError] = useState<Error | null>(null);
 
     useEffect(() => {
+        if (!host) {
+            setError(new Error("No project selected"));
+            return;
+        }
         const apiHelper = async () => {
-            const result = await fetchApi("/workspaces");
-            result.forEach((workspace: Workspace) => {
-                if (workspace.owner.id === organizationId) {
-                    setSubjects(workspace.subjects);
+            try {
+                const result = await fetchWorkspaces();
+                result.forEach((workspace: Workspace) => {
+                    if (workspace.owner.id === organizationId) {
+                        setSubjects(workspace.subjects);
+                    }
+                });
+            } catch (e) {
+                setSubjects([]);
+                if (e instanceof Error) {
+                    setError(e);
                 }
-            });
+            }
         };
 
-        try {
-            apiHelper();
-        } catch (e) {
-            setSubjects([]);
-            if (e instanceof Error) {
-                setError(e);
-            }
-        }
+        apiHelper();
     }, [organizationId]);
 
     if (error) {
