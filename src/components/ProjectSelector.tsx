@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { toast } from "react-toastify";
 import { fetchWorkspaces } from "../lib/api";
-import { hostState } from "../lib/atoms";
 import { Subject, Workspace } from "../types";
 
 interface ProjectSelectorProps {
@@ -10,15 +9,9 @@ interface ProjectSelectorProps {
 }
 
 function ProjectSelector({ organizationId, onProjectChange }: ProjectSelectorProps) {
-    const host = useRecoilValue(hostState);
     const [subjects, setSubjects] = useState<Subject[]>([]);
-    const [error, setError] = useState<Error | null>(null);
 
     useEffect(() => {
-        if (!host) {
-            setError(new Error("No project selected"));
-            return;
-        }
         const apiHelper = async () => {
             try {
                 const result = await fetchWorkspaces();
@@ -30,7 +23,7 @@ function ProjectSelector({ organizationId, onProjectChange }: ProjectSelectorPro
             } catch (e) {
                 setSubjects([]);
                 if (e instanceof Error) {
-                    setError(e);
+                    toast.error(e.message);
                 }
             }
         };
@@ -38,12 +31,8 @@ function ProjectSelector({ organizationId, onProjectChange }: ProjectSelectorPro
         apiHelper();
     }, [organizationId]);
 
-    if (error) {
-        return <>"Error with ProjectSelector"</>;
-    }
-
     if (subjects.length === 0) {
-        return <>"No subjects"</>;
+        return <p>No subjects</p>;
     }
 
     return (

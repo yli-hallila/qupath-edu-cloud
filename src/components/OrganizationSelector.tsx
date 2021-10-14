@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { useRecoilValue } from "recoil";
 import { fetchOrganizations } from "../lib/api";
 import { hostState } from "../lib/atoms";
@@ -11,11 +12,9 @@ interface OrganizationSelectorProps {
 function OrganizationSelector({ onOrganizationChange }: OrganizationSelectorProps) {
     const host = useRecoilValue(hostState);
     const [organizations, setOrganizations] = useState([]);
-    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         if (!host) {
-            setError("No host selected");
             return;
         }
 
@@ -23,10 +22,9 @@ function OrganizationSelector({ onOrganizationChange }: OrganizationSelectorProp
             try {
                 const result = await fetchOrganizations();
                 setOrganizations(result);
-                setError(null);
             } catch (e) {
                 if (e instanceof Error) {
-                    setError(e.message);
+                    toast.error(e.message);
                 }
             }
         };
@@ -34,27 +32,30 @@ function OrganizationSelector({ onOrganizationChange }: OrganizationSelectorProp
         apiHelper();
     }, [host]);
 
-    if (error) {
-        return <p>{error}</p>;
-    }
-
-    if (organizations.length === 0) {
-        return <p>Select a host</p>;
+    if (!host) {
+        return (
+            <div id="OrganizationSelector">
+                {" "}
+                <p className="font-bold">No host selected</p>
+            </div>
+        );
     }
 
     return (
         <div id="OrganizationSelector">
             <p className="text-xl">Select organization</p>
 
-            <select name="organization" onChange={(e) => onOrganizationChange(e.target.value)}>
-                <option>Select ...</option>
+            {organizations.length > 0 && (
+                <select name="organization" onChange={(e) => onOrganizationChange(e.target.value)}>
+                    <option>Select ...</option>
 
-                {organizations.map((organization: Organization) => (
-                    <option value={organization.id} key={organization.id}>
-                        {organization.name}
-                    </option>
-                ))}
-            </select>
+                    {organizations.map((organization: Organization) => (
+                        <option value={organization.id} key={organization.id}>
+                            {organization.name}
+                        </option>
+                    ))}
+                </select>
+            )}
         </div>
     );
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 import { fetchHosts } from "../lib/api";
 import { hostState } from "../lib/atoms";
@@ -7,7 +8,6 @@ import { Host } from "../types";
 function HostSelector() {
     const [hosts, setHosts] = useState<Host[]>([]);
     const setHost = useSetRecoilState(hostState);
-    const [error, setError] = useState<Error | null>(null);
 
     const onHostChange = (hostId: string) => {
         const newHost = hosts.find((host: Host) => host.id === hostId);
@@ -23,7 +23,7 @@ function HostSelector() {
                 setHosts(result);
             } catch (e) {
                 if (e instanceof Error) {
-                    setError(e);
+                    toast.error(e.message);
                 }
             }
         };
@@ -31,8 +31,8 @@ function HostSelector() {
         apiHelper();
     }, []);
 
-    if (error) {
-        return <>"Error with HostSelector"</>;
+    if (hosts.length === 0) {
+        return <p>Unexpected error with HostSelector</p>;
     }
 
     return (

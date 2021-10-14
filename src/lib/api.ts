@@ -20,7 +20,7 @@ export function getApiUrl(host = "", path = "") {
 async function request(path: string, init: RequestInit = {}) {
     const host = getRecoil(hostState);
     if (!host) {
-        throw new Error("No host specified");
+        throw new Error("Choose a host");
     }
 
     // temporary backend fix. TODO: REMOVE SOON!
