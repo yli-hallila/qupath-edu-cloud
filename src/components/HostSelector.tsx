@@ -4,6 +4,7 @@ import { useSetRecoilState } from "recoil";
 import validator from "validator";
 import { fetchHosts } from "../lib/api";
 import { hostState } from "../lib/atoms";
+import { setValue } from "../lib/localStorage";
 import "../styles/Buttons.css";
 import { Host } from "../types";
 
@@ -85,7 +86,10 @@ function HostSelector() {
                 className="button"
                 type="button"
                 disabled={!chosenHost.host || (!chosenHost.private && !chosenHost.host && !urlError)}
-                onClick={() => setHost(chosenHost.host)}
+                onClick={() => {
+                    setHost(chosenHost.host);
+                    setValue("qupath_host", chosenHost.host);
+                }}
             >
                 Save preferences
             </button>
