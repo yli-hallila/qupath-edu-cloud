@@ -20,7 +20,7 @@ const App = () => {
     };
 
     return (
-        <div className="App mx-auto font-mono h-screen">
+        <div className="App mx-auto font-mono h-screen bg-gray-100">
             <ToastContainer />
             <div className="bg-blue-500 p-2">
                 <p className="text-white font-bold text-lg text-center">
