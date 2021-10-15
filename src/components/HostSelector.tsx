@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useSetRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import validator from "validator";
 import { fetchHosts } from "../lib/api";
 import { hostState } from "../lib/atoms";
@@ -74,23 +74,30 @@ function HostSelector() {
                             setHost(null);
                             setValue("qupath_host", null);
                         }}
-                    >Change host</button>
+                    >
+                        Change host
+                    </button>
                 </>
             ) : (
                 <>
                     <p className="text-xl">Choose a host</p>
-                    <select className="w-full" disabled={chosenHost.private} name="host" onChange={(e) => onPublicHostChange(e.target.value)}>
+                    <select
+                        className="w-full"
+                        disabled={chosenHost.private}
+                        name="host"
+                        onChange={(e) => onPublicHostChange(e.target.value)}
+                    >
                         <option>Select a public host</option>
-    
+
                         {hosts.map((host: Host) => (
                             <option value={host.id} key={host.id}>
                                 {host.name}
                             </option>
                         ))}
                     </select>
-    
+
                     <p className="text-xl text-center font-bold my-4">OR</p>
-    
+
                     <form>
                         <input
                             type="text"
@@ -99,9 +106,9 @@ function HostSelector() {
                             className="w-full"
                         />
                     </form>
-    
+
                     <p className={urlError ? "visible" : "invisible"}>Not a valid URL.</p>
-                    
+
                     <button
                         className="button w-full"
                         type="button"

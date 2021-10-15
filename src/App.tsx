@@ -50,15 +50,13 @@ const App = () => {
                     <header className="App-header mx-auto w-72 space-y-12 mt-4">
                         <h1 className="text-3xl">QuPath Edu Cloud</h1>
                     </header>
-                    
                     <HostSelector />
-
                     {currentHost ? (
                         <>
                             <OrganizationSelector onOrganizationChange={onOrganizationChange} />
                             <ProjectSelector organizationId={organization} onProjectChange={onProjectChange} />
                         </>
-                    ) : null }
+                    ) : null}
                 </div>
             )}
         </div>
