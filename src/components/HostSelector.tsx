@@ -47,10 +47,6 @@ function HostSelector() {
 
     const onSave = async () => {
         setWaiting(true);
-        console.log(selection.host);
-        if (selection.host) {
-            console.log(await isValidHost(selection.host.host));
-        }
         const valid = selection.host ? await isValidHost(selection.host.host) : false;
         if (valid) {
             setHost(selection.host);
