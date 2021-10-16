@@ -59,12 +59,14 @@ const Home = () => {
                         <h1 className="text-3xl">QuPath Edu Cloud</h1>
                     </header>
                     <HostSelector />
-                    {currentHost ? (
+                    {currentHost && (
                         <>
                             <OrganizationSelector onOrganizationChange={onOrganizationChange} />
-                            <ProjectSelector organizationId={organization} onProjectChange={onProjectChange} />
+                            {organization && (
+                                <ProjectSelector organizationId={organization} onProjectChange={onProjectChange} />
+                            )}
                         </>
-                    ) : null}
+                    )}
                 </div>
             )}
         </>

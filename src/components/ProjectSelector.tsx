@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import { fetchWorkspaces } from "../lib/api";
 import { Subject, Workspace } from "../types";
 
@@ -12,6 +11,10 @@ function ProjectSelector({ organizationId, onProjectChange }: ProjectSelectorPro
     const [subjects, setSubjects] = useState<Subject[]>([]);
 
     useEffect(() => {
+        if (!organizationId) {
+            return;
+        }
+
         const apiHelper = async () => {
             try {
                 const result = await fetchWorkspaces();
@@ -22,9 +25,6 @@ function ProjectSelector({ organizationId, onProjectChange }: ProjectSelectorPro
                 });
             } catch (e) {
                 setSubjects([]);
-                if (e instanceof Error) {
-                    toast.error(e.message);
-                }
             }
         };
 
