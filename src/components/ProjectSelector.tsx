@@ -23,7 +23,7 @@ function ProjectSelector({ organizationId, onProjectChange }: ProjectSelectorPro
                         setSubjects(workspace.subjects);
                     }
                 });
-            } catch (e) {
+            } catch {
                 setSubjects([]);
             }
         };

@@ -31,7 +31,7 @@ const Home = () => {
                 }
             }
 
-            // Read from browser's locale storage
+            // Read from browser's local storage
             const cachedHost = getValue("qupath_host");
             if (cachedHost) {
                 setHost(cachedHost);
