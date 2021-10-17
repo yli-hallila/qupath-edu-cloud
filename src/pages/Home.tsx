@@ -1,34 +1,39 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import history from "lib/history";
+import { useParams } from "react-router-dom";
+import validator from "validator";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import "tailwindcss/tailwind.css";
-import validator from "validator";
 import HostSelector from "components/HostSelector";
 import OrganizationSelector from "components/OrganizationSelector";
 import ProjectSelector from "components/ProjectSelector";
 import ProjectView from "components/ProjectView";
-import { hostState } from "lib/atoms";
-import { getValue, setValue } from "lib/localStorage";
+import { genPath, hostState } from "lib/atoms";
+import { getValue } from "lib/localStorage";
 import Constants from "lib/constants";
+import Slugs from "lib/slugs";
 
 const Home = () => {
     const setHost = useSetRecoilState(hostState);
     const currentHost = useRecoilValue(hostState);
     const [organization, setOrganization] = useState("");
     const [projectId, setProjectId] = useState("");
-    const query = useLocation().search;
+    const slugs = useParams<Slugs>();
 
     useEffect(() => {
         const hostHelper = async () => {
-            // Read URL query first
-            if (query) {
-                const queryUrl = new URLSearchParams(query).get("host");
+            // Read host from URL first
+            if (slugs.host) {
+                const host = decodeURIComponent(slugs.host);
 
-                if (queryUrl && validator.isURL(queryUrl)) {
-                    const queryHost = { name: queryUrl, id: "query-host", host: queryUrl, img: "" };
+                if (validator.isURL(host, { require_tld: false })) {
+                    const queryHost = { name: host, id: "query-host", host: host, img: "" };
                     setHost(queryHost);
-                    setValue(Constants.LOCALSTORAGE_HOST_KEY, queryHost);
+                    return;
+                } else {
+                    toast.error("Invalid host")
                 }
             }
 
@@ -39,21 +44,28 @@ const Home = () => {
             }
         };
 
+        // Read organization and project from URL
+        setOrganization(slugs.organization);
+        setProjectId(slugs.project);
+        
         hostHelper();
-    }, []);
+    }, [slugs]);
 
+    // TODO: Are these necessary?
     const onOrganizationChange = (newOrganization: string) => {
+        history.replace(genPath(slugs, { organization: newOrganization }));
         setOrganization(newOrganization);
     };
 
     const onProjectChange = (newProjectId: string) => {
+        //history.replace(`/${organization}/${newProjectId}`);
         setProjectId(newProjectId);
     };
 
     return (
         <>
             {projectId ? (
-                <ProjectView projectId={projectId} onProjectChange={onProjectChange} />
+                <ProjectView organizationId={organization} projectId={projectId} onProjectChange={onProjectChange} />
             ) : (
                 <div className="App-header mx-auto w-72 space-y-12 mt-4">
                     <header className="App-header mx-auto w-72 space-y-12 mt-4">

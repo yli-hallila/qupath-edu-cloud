@@ -87,6 +87,10 @@ export interface Image {
     annotations: string; // Serialized Java fuckery
 }
 
+export function getSlideId(slide: Image): string {
+    return new URL(slide.serverBuilder.uri).pathname.substr(1);
+}
+
 // Commented out unused props
 export interface ServerBuilder {
     uri: string;

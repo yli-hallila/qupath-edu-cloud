@@ -1,4 +1,7 @@
-import { Image } from "types";
+import { Image, getSlideId } from "types";
+import { Link, useParams } from "react-router-dom";
+import Slugs from "lib/slugs";
+import { genPath } from "lib/atoms";
 
 interface SlidesProps {
     images?: Image[];
@@ -6,15 +9,17 @@ interface SlidesProps {
 }
 
 function Slides({ images, onSlideChange }: SlidesProps) {
+    const slugs = useParams<Slugs>();
+
     return (
         <div id="Slides">
             {images ? (
                 <>
                     {images.map((slide) => (
-                        <div
+                        <Link
+                            to={genPath(slugs, { slide: getSlideId(slide) })}
                             key={slide.entryID}
                             className="grid grid-cols-6 p-2 border-b border-t mb-2 cursor-pointer"
-                            onClick={() => onSlideChange(slide.serverBuilder.uri)}
                         >
                             <div className="col-span-1">
                                 {slide.thumbnail && (
@@ -26,7 +31,7 @@ function Slides({ images, onSlideChange }: SlidesProps) {
                                 <p>{slide.imageName}</p>
                                 <p className="font-light text-xs">{slide.description}</p>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </>
             ) : (

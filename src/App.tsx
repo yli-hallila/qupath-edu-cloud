@@ -4,10 +4,9 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "tailwindcss/tailwind.css";
 import Home from "pages/Home";
+import history from "lib/history";
 
 const App = () => {
-    const history = createBrowserHistory();
-
     return (
         <Router history={history}>
             <div className="App mx-auto font-mono h-screen bg-gray-100">
@@ -22,7 +21,16 @@ const App = () => {
                 </div>
 
                 <Switch>
-                    <Route path="/">
+                    <Route path={[
+                        "/host/:host/:organization/:project/:slide",
+                        "/host/:host/:organization/:project/",
+                        "/host/:host/:organization/",
+                        "/host/:host/",
+                        "/:organization/:project/:slide",
+                        "/:organization/:project/",
+                        "/:organization/",
+                        "/"
+                    ]}>
                         <Home />
                     </Route>
                 </Switch>

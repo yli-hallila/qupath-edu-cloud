@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { fetchWorkspaces } from "lib/api";
 import { Subject, Workspace } from "types";
+import { Link, useParams } from "react-router-dom";
+import { genPath } from "lib/atoms";
+import Slugs from "lib/slugs";
 
 interface ProjectSelectorProps {
     organizationId: string;
@@ -9,6 +12,7 @@ interface ProjectSelectorProps {
 
 function ProjectSelector({ organizationId, onProjectChange }: ProjectSelectorProps) {
     const [subjects, setSubjects] = useState<Subject[]>([]);
+    const slugs = useParams<Slugs>();
 
     useEffect(() => {
         if (!organizationId) {
@@ -53,9 +57,12 @@ function ProjectSelector({ organizationId, onProjectChange }: ProjectSelectorPro
                             return a.name.localeCompare(b.name)
                         }).map(project => (
                             <li key={project.id}>
-                                <a className="cursor-pointer" onClick={() => onProjectChange(project.id)}>
+                                <Link 
+                                    to={genPath(slugs, { project: project.id })}
+                                    replace={true}
+                                >
                                     {project.name}
-                                </a>
+                                </Link>
                             </li>
                         ))}
                     </ul>

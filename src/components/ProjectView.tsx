@@ -1,22 +1,29 @@
 import { useEffect, useState } from "react";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 import { fetchProjectData } from "lib/api";
 import "styles/Tabs.css";
 import { ProjectData } from "types";
 import Annotations from "./Annotations";
 import Slides from "./Slides";
 import Viewer from "./Viewer";
+import history from "lib/history";
+import Slugs from "lib/slugs";
+import { genPath } from "lib/atoms";
 
 interface ProjectViewProps {
+    organizationId: string;
     projectId: string;
     onProjectChange: (newProject: string) => void;
 }
 
-function ProjectView({ projectId, onProjectChange }: ProjectViewProps) {
+function ProjectView({ organizationId, projectId, onProjectChange }: ProjectViewProps) {
     const [projectData, setProjectData] = useState<ProjectData | null>(null);
     const [annotations, setAnnotations] = useState([]);
     const [slide, setSlide] = useState("");
+    const slugs = useParams<Slugs>();
 
     const onSlideChange = (newSlide: string) => {
         if (projectData) {
@@ -32,7 +39,10 @@ function ProjectView({ projectId, onProjectChange }: ProjectViewProps) {
                 }
             }
 
-            setSlide(new URL(newSlide).pathname.substr(1));
+            const slideId = new URL(newSlide).pathname.substr(1);
+
+            //history.push(`/${organizationId}/${projectId}/${slideId}`);
+            setSlide(slideId);
         }
     };
 
@@ -52,14 +62,23 @@ function ProjectView({ projectId, onProjectChange }: ProjectViewProps) {
         apiHelper();
     }, [projectId]);
 
+    useEffect(() => {
+        console.log(slugs.slide);
+        setSlide(slugs.slide);
+    }, [ slugs ]);
+
     return (
         <main className="flex flex-wrap flex-grow p-4 h-full">
             {projectData && (
                 <>
                     <div className="w-1/4 border">
-                        <a className="p-4 italic cursor-pointer" onClick={() => onProjectChange("")}>
+                        <Link 
+                            to={genPath(slugs, { project: null, slide: null })}
+                            replace={true}
+                        >
                             &lt; return to projects
-                        </a>
+                        </Link>
+
                         <Tabs>
                             <TabList>
                                 <Tab>Slides</Tab>
