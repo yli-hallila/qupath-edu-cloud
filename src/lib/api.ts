@@ -1,5 +1,5 @@
-import { getRecoil } from "recoil-nexus";
 import { hostState } from "lib/atoms";
+import { getRecoil } from "recoil-nexus";
 
 /**
  * Helper to make GET requests to the API.
