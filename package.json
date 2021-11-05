@@ -17,6 +17,7 @@
         "react-scripts": "^4.0.3",
         "react-tabs": "^3.2.2",
         "react-toastify": "^8.0.3",
+        "reactjs-popup": "^2.0.5",
         "recoil": "^0.5.0",
         "recoil-nexus": "^0.3.8",
         "validator": "^13.6.0",
