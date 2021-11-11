@@ -1,3 +1,4 @@
+import { validateEduAnswer } from "lib/helpers";
 import { useState } from "react";
 import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
@@ -9,9 +10,8 @@ interface AnnotationProps {
 }
 
 function AnnotationPopup({ annotation }: AnnotationProps) {
-    const eduAnswers = Array.isArray(annotation.properties.metadata.EDU_ANSWER)
-        ? annotation.properties.metadata.EDU_ANSWER
-        : null;
+    const eduAnswers = validateEduAnswer(annotation.properties.metadata.EDU_ANSWER);
+
     const annotationDescription = annotation.properties.metadata.ANNOTATION_DESCRIPTION;
 
     const [answerVisible, setAnswerVisible] = useState(false);
@@ -40,11 +40,11 @@ function AnnotationPopup({ annotation }: AnnotationProps) {
             contentStyle={{ width: 325, height: 200, backgroundColor: "#ddd" }}
         >
             <div className="p-4">
-                {quizVisible && eduAnswers ? (
-                    <AnnotationQuiz eduAnswers={eduAnswers} handleShowQuiz={handleShowQuiz} />
+                {quizVisible && eduAnswers.json ? (
+                    <AnnotationQuiz eduAnswers={eduAnswers.data} handleShowQuiz={handleShowQuiz} />
                 ) : (
                     <>
-                        {eduAnswers && eduAnswers.length > 0 ? (
+                        {eduAnswers.json && eduAnswers.data.length > 0 ? (
                             <>
                                 <button className="button3d mr-4 w-28" onClick={() => handleShowQuiz()}>
                                     Show quiz
