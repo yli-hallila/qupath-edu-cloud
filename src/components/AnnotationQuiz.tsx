@@ -17,41 +17,6 @@ function AnnotationQuiz({ eduAnswers, handleShowQuiz }: QuizProps) {
         }
     });
 
-    const result = () => {
-        if (correctAnswer === null) {
-            return currentChoice ? (
-                <button className="button3d mr-4" onClick={() => onSubmitAnswer()}>
-                    OK
-                </button>
-            ) : (
-                <button className="button mr-4" disabled>
-                    OK
-                </button>
-            );
-        }
-
-        if (correctAnswer) {
-            return (
-                <>
-                    <p>Correct answer!</p>;
-                    <button className="button3d mr-4" onClick={() => handleShowQuiz()}>
-                        OK
-                    </button>
-                </>
-            );
-        }
-
-        return (
-            <>
-                <p>Wrong answer!</p>
-                <p>All the right answers are: {answers}</p>
-                <button className="button3d mr-4" onClick={() => handleShowQuiz()}>
-                    OK
-                </button>
-            </>
-        );
-    };
-
     const onSubmitAnswer = () => {
         if (!currentChoice) {
             setCorrectAnswer(null);
@@ -67,24 +32,45 @@ function AnnotationQuiz({ eduAnswers, handleShowQuiz }: QuizProps) {
 
     return (
         <div className="mt-8">
-            <form>
-                <select
-                    className="form-select w-full mb-4"
-                    name="Answer"
-                    onChange={(e) => setCurrentChoice(e.target.value)}
-                >
-                    <option></option>
-                    {choices.map((option, i) => (
-                        <option key={i}>{option}</option>
-                    ))}
-                </select>
-            </form>
-            {result()}
+            {correctAnswer === null ? (
+                <>
+                    <p>Name of the annotation</p>
+                    <form>
+                        <select
+                            className="form-select w-full mb-4"
+                            name="Answer"
+                            onChange={(e) => setCurrentChoice(e.target.value)}
+                        >
+                            <option></option>
+                            {choices.map((option, i) => (
+                                <option key={i}>{option}</option>
+                            ))}
+                        </select>
+                    </form>
 
-            {correctAnswer === null && (
-                <button className="button3d mr-4" onClick={() => handleShowQuiz()}>
-                    Cancel
-                </button>
+                    <button className="button3d mr-4" onClick={() => onSubmitAnswer()} disabled={!currentChoice}>
+                        OK
+                    </button>
+
+                    <button className="button3d mr-4" onClick={() => handleShowQuiz()}>
+                        Cancel
+                    </button>
+                </>
+            ) : (
+                <div className="mt-4">
+                    {correctAnswer ? (
+                        <p>Correct answer!</p>
+                    ) : (
+                        <>
+                            <p>Wrong answer!</p>
+                            <p>Right answers: {answers}</p>
+                        </>
+                    )}
+
+                    <button className="button3d mr-4 mt-4" onClick={() => handleShowQuiz()}>
+                        OK
+                    </button>
+                </div>
             )}
         </div>
     );

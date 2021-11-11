@@ -10,6 +10,7 @@ interface AnnotationProps {
 }
 
 function AnnotationPopup({ annotation }: AnnotationProps) {
+    console.log(annotation.properties);
     const eduAnswers = validateEduAnswer(annotation.properties.metadata.EDU_ANSWER);
 
     const annotationDescription = annotation.properties.metadata.ANNOTATION_DESCRIPTION;
@@ -36,30 +37,36 @@ function AnnotationPopup({ annotation }: AnnotationProps) {
                 </button>
             }
             position="right center"
+            modal
             arrowStyle={{ color: "#ddd" }}
-            contentStyle={{ width: 325, height: 200, backgroundColor: "#ddd" }}
+            contentStyle={{ width: 300, height: 200, backgroundColor: "#ddd" }}
         >
-            <div className="p-4">
-                {quizVisible && eduAnswers.json ? (
-                    <AnnotationQuiz eduAnswers={eduAnswers.data} handleShowQuiz={handleShowQuiz} />
+            <div className="p-4 flex justify-center flex-col">
+                {eduAnswers.json ? (
+                    <>
+                        {quizVisible ? (
+                            <AnnotationQuiz eduAnswers={eduAnswers.data} handleShowQuiz={handleShowQuiz} />
+                        ) : (
+                            <button className="button3d mr-4 w-28" onClick={() => handleShowQuiz()}>
+                                Show quiz
+                            </button>
+                        )}
+                    </>
                 ) : (
                     <>
-                        {eduAnswers.json && eduAnswers.data.length > 0 ? (
-                            <>
-                                <button className="button3d mr-4 w-28" onClick={() => handleShowQuiz()}>
-                                    Show quiz
-                                </button>
+                        {annotationDescription ? (
+                            <div className="">
                                 <button className="button3d w-36" onClick={() => handleShowAnswer()}>
                                     {answerVisible ? "Hide" : "Show"} answer
                                 </button>
-                                {answerVisible && <p className="pt-4">{annotationDescription}</p>}
-                            </>
+                                <br />
+                                {answerVisible && <p className="pt-4 blur-3xl">{annotationDescription}</p>}
+                            </div>
                         ) : (
                             <>
                                 <button className="button" disabled>
                                     No answer defined
                                 </button>
-                                <p>{annotationDescription}</p>
                             </>
                         )}
                     </>
