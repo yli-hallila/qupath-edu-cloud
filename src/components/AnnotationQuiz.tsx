@@ -1,17 +1,21 @@
 import { useState } from "react";
-import { Annotation } from "types";
+import { EduAnswer } from "types";
 
 interface QuizProps {
-    annotation: Annotation;
+    eduAnswers: EduAnswer[];
     handleShowQuiz: () => void;
 }
 
-function AnnotationQuiz({ annotation, handleShowQuiz }: QuizProps) {
-    const mockAnswers = ["Choice #2"]; // annotation.answer?
-    const mockChoices = ["Choice #1", "Choice #2", "Choice #3"]; // annotation.choices?
-
+function AnnotationQuiz({ eduAnswers, handleShowQuiz }: QuizProps) {
     const [currentChoice, setCurrentChoice] = useState<string | null>(null);
     const [correctAnswer, setCorrectAnswer] = useState<boolean | null>(null);
+
+    const choices = eduAnswers.map((answer) => answer.choice);
+    const answers = eduAnswers.map((answer) => {
+        if (answer.isAnswer) {
+            return answer.choice;
+        }
+    });
 
     const result = () => {
         if (correctAnswer === null) {
@@ -40,7 +44,7 @@ function AnnotationQuiz({ annotation, handleShowQuiz }: QuizProps) {
         return (
             <>
                 <p>Wrong answer!</p>
-                <p>All the right answers are: {mockAnswers}</p>
+                <p>All the right answers are: {answers}</p>
                 <button className="button3d mr-4" onClick={() => handleShowQuiz()}>
                     OK
                 </button>
@@ -54,7 +58,7 @@ function AnnotationQuiz({ annotation, handleShowQuiz }: QuizProps) {
             return;
         }
 
-        if (mockAnswers.includes(currentChoice)) {
+        if (answers.includes(currentChoice)) {
             setCorrectAnswer(true);
         } else {
             setCorrectAnswer(false);
@@ -70,7 +74,7 @@ function AnnotationQuiz({ annotation, handleShowQuiz }: QuizProps) {
                     onChange={(e) => setCurrentChoice(e.target.value)}
                 >
                     <option></option>
-                    {mockChoices.map((option, i) => (
+                    {choices.map((option, i) => (
                         <option key={i}>{option}</option>
                     ))}
                 </select>

@@ -9,8 +9,10 @@ interface AnnotationProps {
 }
 
 function AnnotationPopup({ annotation }: AnnotationProps) {
-    const mockDescription = "Description"; // annotation.description?
-    const mockAnswers = ["Choice #2"]; // annotation.answers?
+    const eduAnswers = Array.isArray(annotation.properties.metadata.EDU_ANSWER)
+        ? annotation.properties.metadata.EDU_ANSWER
+        : null;
+    const annotationDescription = annotation.properties.metadata.ANNOTATION_DESCRIPTION;
 
     const [answerVisible, setAnswerVisible] = useState(false);
     const [quizVisible, setQuizVisible] = useState(false);
@@ -38,11 +40,11 @@ function AnnotationPopup({ annotation }: AnnotationProps) {
             contentStyle={{ width: 325, height: 200, backgroundColor: "#ddd" }}
         >
             <div className="p-4">
-                {quizVisible ? (
-                    <AnnotationQuiz annotation={annotation} handleShowQuiz={handleShowQuiz} />
+                {quizVisible && eduAnswers ? (
+                    <AnnotationQuiz eduAnswers={eduAnswers} handleShowQuiz={handleShowQuiz} />
                 ) : (
                     <>
-                        {mockAnswers.length > 0 ? (
+                        {eduAnswers && eduAnswers.length > 0 ? (
                             <>
                                 <button className="button3d mr-4 w-28" onClick={() => handleShowQuiz()}>
                                     Show quiz
@@ -50,14 +52,14 @@ function AnnotationPopup({ annotation }: AnnotationProps) {
                                 <button className="button3d w-36" onClick={() => handleShowAnswer()}>
                                     {answerVisible ? "Hide" : "Show"} answer
                                 </button>
-                                {answerVisible && <p className="pt-4">{mockDescription}</p>}
+                                {answerVisible && <p className="pt-4">{annotationDescription}</p>}
                             </>
                         ) : (
                             <>
                                 <button className="button" disabled>
                                     No answer defined
                                 </button>
-                                <p>{mockDescription}</p>
+                                <p>{annotationDescription}</p>
                             </>
                         )}
                     </>
