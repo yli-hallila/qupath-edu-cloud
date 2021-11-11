@@ -10,9 +10,7 @@ interface AnnotationProps {
 }
 
 function AnnotationPopup({ annotation }: AnnotationProps) {
-    console.log(annotation.properties);
     const eduAnswers = validateEduAnswer(annotation.properties.metadata.EDU_ANSWER);
-
     const annotationDescription = annotation.properties.metadata.ANNOTATION_DESCRIPTION;
 
     const [answerVisible, setAnswerVisible] = useState(false);
