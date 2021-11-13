@@ -8,6 +8,11 @@ export const hostState = atom({
     default: null as Host | null,
 });
 
+export const organizationState = atom({
+    key: "organizationState",
+    default: null as string | null,
+});
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function genPath(slugs: Slugs, newSlugs: any): string {
     let path = "/";

@@ -7,10 +7,9 @@ import Slugs from "lib/slugs";
 
 interface ProjectSelectorProps {
     organizationId: string;
-    onProjectChange: (newProject: string) => void;
 }
 
-function ProjectSelector({ organizationId, onProjectChange }: ProjectSelectorProps) {
+function ProjectSelector({ organizationId }: ProjectSelectorProps) {
     const [subjects, setSubjects] = useState<Subject[]>([]);
     const slugs = useParams<Slugs>();
 

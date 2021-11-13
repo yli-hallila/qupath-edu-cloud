@@ -9,6 +9,8 @@ import { hostState } from "lib/atoms";
  */
 async function request(path: string, init: RequestInit = {}) {
     const host = getRecoil(hostState);
+    console.log("inside api.ts");
+    console.log(host);
     if (!host) {
         throw new Error("Choose a host");
     }

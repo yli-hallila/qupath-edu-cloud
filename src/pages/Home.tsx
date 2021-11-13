@@ -16,40 +16,38 @@ import Constants from "lib/constants";
 import Slugs from "lib/slugs";
 
 const Home = () => {
-    const setHost = useSetRecoilState(hostState);
+    //const setHost = useSetRecoilState(hostState);
     const currentHost = useRecoilValue(hostState);
     const [organization, setOrganization] = useState("");
-    const [projectId, setProjectId] = useState("");
     const slugs = useParams<Slugs>();
 
-    useEffect(() => {
-        const hostHelper = async () => {
-            // Read host from URL first
-            if (slugs.host) {
-                const host = decodeURIComponent(slugs.host);
+    // useEffect(() => {
+    //     const hostHelper = async () => {
+    //         // Read host from URL first
+    //         if (slugs.host) {
+    //             const host = decodeURIComponent(slugs.host);
 
-                if (validator.isURL(host, { require_tld: false })) {
-                    const queryHost = { name: host, id: "query-host", host: host, img: "" };
-                    setHost(queryHost);
-                    return;
-                } else {
-                    toast.error("Invalid host")
-                }
-            }
+    //             if (validator.isURL(host, { require_tld: false })) {
+    //                 const queryHost = { name: host, id: "query-host", host: host, img: "" };
+    //                 setHost(queryHost);
+    //                 return;
+    //             } else {
+    //                 toast.error("Invalid host")
+    //             }
+    //         }
 
-            // Read from browser's local storage
-            const cachedHost = getValue(Constants.LOCALSTORAGE_HOST_KEY);
-            if (cachedHost) {
-                setHost(cachedHost);
-            }
-        };
+    //         // Read from browser's local storage
+    //         const cachedHost = getValue(Constants.LOCALSTORAGE_HOST_KEY);
+    //         if (cachedHost) {
+    //             setHost(cachedHost);
+    //         }
+    //     };
 
-        // Read organization and project from URL
-        setOrganization(slugs.organization);
-        setProjectId(slugs.project);
+    //     // Read organization and project from URL
+    //     setOrganization(slugs.organization);
         
-        hostHelper();
-    }, [slugs]);
+    //     hostHelper();
+    // }, [slugs]);
 
     // TODO: Are these necessary?
     const onOrganizationChange = (newOrganization: string) => {
@@ -57,32 +55,23 @@ const Home = () => {
         setOrganization(newOrganization);
     };
 
-    const onProjectChange = (newProjectId: string) => {
-        //history.replace(`/${organization}/${newProjectId}`);
-        setProjectId(newProjectId);
-    };
-
     return (
-        <>
-            {projectId ? (
-                <ProjectView organizationId={organization} projectId={projectId} onProjectChange={onProjectChange} />
-            ) : (
-                <div className="App-header mx-auto w-72 space-y-12 mt-4">
-                    <header className="App-header mx-auto w-72 space-y-12 mt-4">
-                        <h1 className="text-3xl">QuPath Edu Cloud</h1>
-                    </header>
-                    <HostSelector />
-                    {currentHost && (
-                        <>
-                            <OrganizationSelector onOrganizationChange={onOrganizationChange} />
-                            {organization && (
-                                <ProjectSelector organizationId={organization} onProjectChange={onProjectChange} />
-                            )}
-                        </>
+        <div className="App-header mx-auto w-72 space-y-12 mt-4">
+            <header className="App-header mx-auto w-72 space-y-12 mt-4">
+                <h1 className="text-3xl">QuPath Edu Cloud</h1>
+            </header>
+
+            <HostSelector />
+            
+            {currentHost && (
+                <>
+                    <OrganizationSelector onOrganizationChange={onOrganizationChange} />
+                    {organization && (
+                        <ProjectSelector organizationId={organization} />
                     )}
-                </div>
+                </>
             )}
-        </>
+        </div>
     );
 };
 

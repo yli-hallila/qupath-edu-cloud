@@ -14,12 +14,11 @@ import Slugs from "lib/slugs";
 import { genPath } from "lib/atoms";
 
 interface ProjectViewProps {
-    organizationId: string;
+    organizationId: string | null;
     projectId: string;
-    onProjectChange: (newProject: string) => void;
 }
 
-function ProjectView({ organizationId, projectId, onProjectChange }: ProjectViewProps) {
+function ProjectView({ organizationId, projectId }: ProjectViewProps) {
     const [projectData, setProjectData] = useState<ProjectData | null>(null);
     const [annotations, setAnnotations] = useState([]);
     const [slide, setSlide] = useState("");
@@ -63,7 +62,6 @@ function ProjectView({ organizationId, projectId, onProjectChange }: ProjectView
     }, [projectId]);
 
     useEffect(() => {
-        console.log(slugs.slide);
         setSlide(slugs.slide);
     }, [ slugs ]);
 
