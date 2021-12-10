@@ -26,10 +26,10 @@ function Viewer({ slideId, annotations }: ViewerProps) {
             navigatorSizeRatio: 0.15,
             navigatorAutoFade: false,
             showNavigationControl: false,
-            gestureSettingsMouse: { 
+            gestureSettingsMouse: {
                 clickToZoom: false,
-                dblClickToZoom: true
-            }
+                dblClickToZoom: true,
+            },
         });
 
         setViewer(viewer);
@@ -42,14 +42,14 @@ function Viewer({ slideId, annotations }: ViewerProps) {
 
         // TODO: Refactor this to its own class/functions etc.
         const apiHelper = async () => {
-            let result: { [key: string]: string};
+            let result: { [key: string]: string };
 
             try {
                 result = await fetchSlide(slideId);
             } catch (e) {
                 throw e;
             }
-            
+
             const downsamples: number[] = [];
             const levelCount = parseInt(result["openslide.level-count"]);
 
@@ -179,7 +179,7 @@ function Viewer({ slideId, annotations }: ViewerProps) {
             setViewport(viewer.viewport);
         };
 
-        apiHelper().catch(e => {
+        apiHelper().catch((e) => {
             setViewer(null);
             if (e instanceof Error) {
                 setError(e);
